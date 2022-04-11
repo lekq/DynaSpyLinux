@@ -1,0 +1,8 @@
+Eva: please create a simple GUI program for our DynaSpy Program ()
+Youmin: please learn the features Windows version of DynaSpy; 
+        list which features you want to include in our Linux version; 
+        build a simple argument parsing program (args_parsing.py)
+
+Khanh: I will build the logic to read the loaded dll (logic.py)
+
+After that, we will merge our code into a complete project
