@@ -1,0 +1,11 @@
+/home/khanhle/Downloads/DynaSpy/a
+[anon]
+/usr/lib/x86_64-linux-gnu/libgcc_s.so.1
+/usr/lib/x86_64-linux-gnu/libm-2.33.so
+/usr/lib/x86_64-linux-gnu/libc-2.33.so
+/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.29
+/etc/ld.so.cache
+/usr/lib/x86_64-linux-gnu/ld-2.33.so
+[stack]
+[vvar]
+[vdso]
