@@ -65,6 +65,7 @@ parser.add_argument('-output', metavar='out-file', type=argparse.FileType('wt'),
 #                     help='Add different values to list')
 
 results = parser.parse_args()
+print (results)
 print ('File_path     =', results.file_path)
 print ('constant_value   =', results.constant_value)
 print ('boolean_switch   =', results.boolean_switch)

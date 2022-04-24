@@ -1,4 +1,3 @@
-from ast import Pass
 import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog as fd
@@ -61,9 +60,10 @@ class GUI:
             initialdir='/Documents',
             filetypes=filetypes)
         if filename:
-            debug_process = self.dll_reader.create_debug_process (filename)
+            
             dll_map = None
             if (self.in_single_mode.get ()):
+                debug_process = self.dll_reader.create_debug_process (filename)
                 while (self.dll_reader.check_process_alive (debug_process)):
                     temp_dll_map = self.dll_reader.single_dll_reading (debug_process)
                     if (dll_map == None or len (temp_dll_map) > len (dll_map)):
@@ -87,7 +87,6 @@ class GUI:
             filetypes=filetypes)
         if (filename):
             output_file = open (filename, 'w')
-            print (self.dll_list)
             for index, value in enumerate (self.dll_list.get(0, 'end')):
                 output_file.write (str (value) + '\n')
             output_file.close ()

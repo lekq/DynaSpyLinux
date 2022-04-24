@@ -6,3 +6,36 @@ Youmin: please learn the features Windows version of DynaSpy;
 Khanh: I will build the logic to read the loaded dll (logic.py)
 
 After that, we will merge our code into a complete project
+
+
+For tester:
+- Right now, I have two different approaches to read the DLL Map. My original solution was called
+iterative approach. Basically, I will create a process of our target program. Suspend, record its DLL map,
+resume, and repeat this process.  However, with program whose running time is very short (~1s), our DLL reader
+sometimes might not be quick enough to catch the process and hence miss some DLLs. Therefore, we can
+repeat the above process around 10 times and pick the most comprehensive results.
+- However, with program whose running time is very long or even infinite, the above approach is surely time-consuming.
+The iterative approach will require the program to finish running before we can output the result.
+We might want to check the output as the program is running. Therefore, I still keep the single approach,
+which is the same as iterative but is only repeated 1 time.
+
+In short, there are 2 modes for this program: iterative and single.
+Iterative is more accurate but more time-consuming
+Single is less accutate but more responsive
+
+To use the DynaSpy:
+    if you prefer to test the version with GUI: 
+        python3 DynaSpy.py -gui
+    if you prefer to test with commandline only: 
+        python3 DynaSpy.py -file <path-to-executable> -output <path-to-output-file> 
+        -file will be compulsory. -output will be optional. 
+        Notice that all the path must be absolute path, not relative path
+        In addition, you might want to specify whether you want iterative or single approach by using
+            -iterative or -single flag
+        Here are some acceptable commands
+
+
+python3 DynaSpy.py -file /home/khanhle/Downloads/DynaSpy/a
+python3 DynaSpy.py -file /home/khanhle/Downloads/DynaSpy/a -output /home/khanhle/Downloads/DynaSpy/abc.txt
+python3 DynaSpy.py -iterative -file /home/khanhle/Downloads/DynaSpy/a -output /home/khanhle/Downloads/DynaSpy/abc.txt
+python3 DynaSpy.py -single -file /home/khanhle/Downloads/DynaSpy/a
