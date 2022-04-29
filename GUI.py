@@ -5,6 +5,7 @@ from tkinter import Radiobutton, BooleanVar
 from tkinter.messagebox import showinfo
 from tkinter.filedialog import askopenfilename, asksaveasfilename
 from DLLReader import DLLReader
+import time
 
 class GUI:
 
@@ -46,11 +47,24 @@ class GUI:
         self.export_btn.pack()
 
         self.dll_list.pack(side='left')
+        self.debug_process_list = []
         self.scroll_bar.config( command = self.dll_list.yview )
 
-        
+    def handle_interactive_dll_result (self, debug_process, prev_dll_map):
+        update_dll_map = prev_dll_map
+        if (debug_process.pid == self.debug_process_list[-1]):
+            if (self.dll_reader.check_process_alive (debug_process)):
+                temp_dll_map = self.dll_reader.single_dll_reading (debug_process)
+                if (prev_dll_map == None or len (temp_dll_map) > len (prev_dll_map)):
+                    update_dll_map = temp_dll_map
+                self.dll_list.delete (0, 'end')
+                for dll in update_dll_map:
+                    self.dll_list.insert('end', dll.path)
+                self.root.after (100, self.handle_interactive_dll_result, debug_process, update_dll_map)
+
 
     def open_file (self):
+        self.root.after_cancel (self.root)
         filetypes = (
             ('All files', '*'),
         )
@@ -59,19 +73,15 @@ class GUI:
             title='Open a file',
             initialdir='/Documents',
             filetypes=filetypes)
+        
         if filename:
-            
             dll_map = None
             if (self.in_single_mode.get ()):
                 debug_process = self.dll_reader.create_debug_process (filename)
-                while (self.dll_reader.check_process_alive (debug_process)):
-                    temp_dll_map = self.dll_reader.single_dll_reading (debug_process)
-                    if (dll_map == None or len (temp_dll_map) > len (dll_map)):
-                        dll_map = temp_dll_map
-                    self.dll_list.delete (0, 'end')
-                    for dll in dll_map:
-                        self.dll_list.insert('end', dll.path)
+                self.debug_process_list.append (debug_process.pid)
+                self.root.after (100, self.handle_interactive_dll_result, debug_process, None)
             else:
+                self.debug_process_list.append (-1)
                 dll_map = self.dll_reader.iterative_dll_reading (filename)
                 self.dll_list.delete (0, 'end')
                 for dll in dll_map:

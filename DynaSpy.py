@@ -32,6 +32,9 @@ else:
                     temp_dll_map = dll_reader.single_dll_reading (debug_process)
                     if (dll_map is None or (temp_dll_map is not None and len (temp_dll_map) > len (dll_map))):
                         dll_map = temp_dll_map
+                    for dll in dll_map:
+                        print (dll.path)
+
             else:
                 dll_map = dll_reader.iterative_dll_reading (filename)
 
