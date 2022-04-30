@@ -21,8 +21,8 @@ class GUI:
 
         # initialize reading mode
         self.in_single_mode = BooleanVar () 
-        Radiobutton(self.root, text = 'Single mode (suitable for program with long running time)', variable = self.in_single_mode, value = True).pack()
-        Radiobutton(self.root, text = 'Iterative mode (suitable for program with short running time)', variable = self.in_single_mode, value = False).pack()
+        Radiobutton(self.root, text = 'Single mode (suitable for program with long running time)', variable = self.in_single_mode, value = True, command = self.enable_stop_button).pack()
+        Radiobutton(self.root, text = 'Iterative mode (suitable for program with short running time)', variable = self.in_single_mode, value = False, command = self.disable_stop_button).pack()
         # create the canvas
         self.canvas = tk.Canvas(self.root, width = self.width_screen, height = self.height_screen)
         
@@ -37,18 +37,33 @@ class GUI:
         self.dll_list = tk.Listbox(self.root, yscrollcommand = self.scroll_bar.set , width=150, height=28)
         
         self.browse_text = tk.StringVar()
-        self.browse_btn = tk.Button(self.root, textvariable = self.browse_text, font='Raleway', bg='#000000', fg='white', height=2, width=15, command = self.open_file)
+        self.browse_btn = tk.Button(self.root, textvariable = self.browse_text, font='Raleway', bg='#000000', fg='white', height=2, width=18, command = self.open_file)
         self.browse_text.set('Browse')
         self.browse_btn.pack()
         
         self.export_text = tk.StringVar()
-        self.export_btn = tk.Button(self.root, textvariable = self.export_text, font='Raleway', bg='#000080', fg='white', height=2, width=15, command = self.save_file)
+        self.export_btn = tk.Button(self.root, textvariable = self.export_text, font='Raleway', bg='#000080', fg='white', height=2, width=18, command = self.save_file)
         self.export_text.set('Save')
         self.export_btn.pack()
+
+        self.stop_text = tk.StringVar()
+        self.stop_btn = tk.Button(self.root, textvariable = self.stop_text, font='Raleway', bg='#FF0000', fg='white', height=2, width=18, command = self.stop_all_current_process)
+        self.stop_text.set('Stop (only single mode)')
+        self.stop_btn["state"] = "disable"
+        self.stop_btn.pack ()
 
         self.dll_list.pack(side='left')
         self.debug_process_list = []
         self.scroll_bar.config( command = self.dll_list.yview )
+
+    def disable_stop_button (self):
+        self.stop_btn["state"] = "disable"
+
+    def enable_stop_button (self):
+        self.stop_btn["state"] = "normal"
+    
+    def stop_all_current_process (self):
+        self.debug_process_list.append (-1)
 
     def handle_interactive_dll_result (self, debug_process, prev_dll_map):
         update_dll_map = prev_dll_map
@@ -64,7 +79,6 @@ class GUI:
 
 
     def open_file (self):
-        self.root.after_cancel (self.root)
         filetypes = (
             ('All files', '*'),
         )
@@ -77,11 +91,12 @@ class GUI:
         if filename:
             dll_map = None
             if (self.in_single_mode.get ()):
+                self.stop_all_current_process ()
                 debug_process = self.dll_reader.create_debug_process (filename)
                 self.debug_process_list.append (debug_process.pid)
                 self.root.after (100, self.handle_interactive_dll_result, debug_process, None)
             else:
-                self.debug_process_list.append (-1)
+                self.stop_all_current_process ()
                 dll_map = self.dll_reader.iterative_dll_reading (filename)
                 self.dll_list.delete (0, 'end')
                 for dll in dll_map:
