@@ -21,6 +21,7 @@ parser.set_defaults (threshold_to_break = math.inf)
 
 argument = parser.parse_args()
 if (argument.gui_mode):
+    # if the user wants GUI mode, run it
     app = GUI ()
     app.run ()
 else:
@@ -37,6 +38,7 @@ else:
                 while (dll_reader.check_process_alive (debug_process)):
                     temp_dll_map = dll_reader.single_dll_reading (debug_process)
                     if (count_similar >= threshold_to_break):
+                        # if there is n conseutive checkpoints where there is no update, the user might choose to stop the analysis
                         continue_program = input ('Your analyzed program did not load any new library for a while. Want to keep recording? [Y/N]').upper ()
                         while (continue_program not in ['Y', 'N']):
                             continue_program = input ('Your analyzed program did not load any new library for a while. Want to keep recording? [Y/N]').upper ()
@@ -46,9 +48,12 @@ else:
                             break
                     if (dll_map is None or (temp_dll_map is not None and len (temp_dll_map) > len (dll_map))):
                         dll_map = temp_dll_map
+                        # if there is an update, reset the counter
                         count_similar = 0
                     else:
+                        # otherwise, add it to the sequence of no update
                         count_similar += 1
+                # write out the result
                 if (output_file):
                     file = open (output_file, 'w')
                     for dll in dll_map:

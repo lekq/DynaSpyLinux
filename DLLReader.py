@@ -4,6 +4,7 @@ import subprocess
 class DLLReader:
     def check_process_alive (self, process):
         return process.poll () is None
+        
     def create_debug_process (self, path_to_executable_file):
         process =  psutil.Popen([path_to_executable_file], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr = subprocess.PIPE)
         process.suspend ()
@@ -17,6 +18,7 @@ class DLLReader:
         return None
     
     def iterative_dll_reading (self, path_to_executable_file):
+        # repeat single reading for 10 times
         num_iteration = 10
         final_dll_map = None
         for iter in range (num_iteration):
